@@ -103,25 +103,33 @@
             var url = atob(location_url.searchParams.get("p"));
             var remake = false;
             var dataUrl = '';
+            
             $.ajax({
-                'url': url + '/?gn=1',
+                'url': url,
                 'success': function(data) {
-                    $('#content-download a').attr('href', data);
-                    $('#header-download').show();
-                    $('#content-download').show();
-                    if (data.reMakeFile) {
-                        remake = true;
-                    }
-                    $('#header-preload').hide();
-                    $('#content-preloader').hide();
-                    dataUrl = data;
-                    $('#dl a').addClass('readyLink');
+                    $.ajax({
+                        'url': url + '/?gn=1',
+                        'success': function(data) {
+                            $('#content-download a').attr('href', data);
+                            $('#header-download').show();
+                            $('#content-download').show();
+                            if (data.reMakeFile) {
+                                remake = true;
+                            }
+                            $('#header-preload').hide();
+                            $('#content-preloader').hide();
+                            dataUrl = data;
+                            $('#dl a').addClass('readyLink');
+                        },
+                        'error': function(data) {
+                            //location.reload();
+                        },
+                        timeout: 10000
+                    });
                 },
-                'error': function(data) {
-                    //location.reload();
-                },
-                timeout: 10000
+                timeout: 5000
             });
+            
             $('#content-download a').click(function() {
                 if (remake) {
                     $(this).attr('href', url);
